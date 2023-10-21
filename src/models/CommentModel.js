@@ -1,15 +1,18 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const commentSchema = new mongoose.Schema(
   {
-    username: { type: String, required: true, unique: true },
+    username: { type: String, required: true },
     content: { type: String, required: true },
     productId: { type: String, required: true },
+    rating: { type: Number, required: true },
   },
   {
     timestamps: true,
-  },
+  }
 );
-const Comment = mongoose.model('Comment', commentSchema);
+commentSchema.index({ username: 1, productId: 1 }, { unique: true });
+
+const Comment = mongoose.model("Comment", commentSchema);
 
 module.exports = Comment;
