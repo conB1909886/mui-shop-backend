@@ -1,6 +1,6 @@
-const Order = require("../models/OrderProduct");
-const Product = require("../models/ProductModel");
-const EmailService = require("../services/EmailService");
+const Order = require('../models/OrderProduct');
+const Product = require('../models/ProductModel');
+const EmailService = require('../services/EmailService');
 
 const createOrder = (newOrder) => {
   return new Promise(async (resolve, reject) => {
@@ -32,17 +32,17 @@ const createOrder = (newOrder) => {
               selled: +order.amount,
             },
           },
-          { new: true }
+          { new: true },
         );
         if (productData) {
           return {
-            status: "OK",
-            message: "SUCCESS",
+            status: 'OK',
+            message: 'SUCCESS',
           };
         } else {
           return {
-            status: "OK",
-            message: "ERR",
+            status: 'OK',
+            message: 'ERR',
             id: order.product,
           };
         }
@@ -55,8 +55,8 @@ const createOrder = (newOrder) => {
           arrId.push(item.id);
         });
         resolve({
-          status: "ERR",
-          message: `San pham voi id: ${arrId.join(",")} khong du hang`,
+          status: 'ERR',
+          message: `San pham voi id: ${arrId.join(',')} khong du hang`,
         });
       } else {
         const createdOrder = await Order.create({
@@ -78,31 +78,44 @@ const createOrder = (newOrder) => {
         if (createdOrder) {
           await EmailService.sendEmailCreateOrder(email, orderItems);
           resolve({
-            status: "OK",
-            message: "success",
+            status: 'OK',
+            message: 'success',
           });
         }
       }
     } catch (e) {
-      console.log("e", e);
+      console.log('e', e);
       reject(e);
     }
   });
 };
 
-// const deleteManyProduct = (ids) => {
-//     return new Promise(async (resolve, reject) => {
-//         try {
-//             await Product.deleteMany({ _id: ids })
-//             resolve({
-//                 status: 'OK',
-//                 message: 'Delete product success',
-//             })
-//         } catch (e) {
-//             reject(e)
-//         }
-//     })
-// }
+const updateOrder = (id, data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const checkOrder = await Order.findOne({
+        _id: id,
+      });
+      if (checkOrder === null) {
+        resolve({
+          status: 'ERR',
+          message: 'The product is not defined',
+        });
+      }
+
+      const updatedOrder = await Order.findByIdAndUpdate(id, data, {
+        new: true,
+      });
+      resolve({
+        status: 'OK',
+        message: 'SUCCESS',
+        data: updatedOrder,
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 
 const getAllOrderDetails = (id) => {
   return new Promise(async (resolve, reject) => {
@@ -112,14 +125,14 @@ const getAllOrderDetails = (id) => {
       }).sort({ createdAt: -1, updatedAt: -1 });
       if (order === null) {
         resolve({
-          status: "ERR",
-          message: "The order is not defined",
+          status: 'ERR',
+          message: 'The order is not defined',
         });
       }
 
       resolve({
-        status: "OK",
-        message: "SUCESSS",
+        status: 'OK',
+        message: 'SUCESSS',
         data: order,
       });
     } catch (e) {
@@ -137,14 +150,14 @@ const getOrderDetails = (id) => {
       });
       if (order === null) {
         resolve({
-          status: "ERR",
-          message: "The order is not defined",
+          status: 'ERR',
+          message: 'The order is not defined',
         });
       }
 
       resolve({
-        status: "OK",
-        message: "SUCESSS",
+        status: 'OK',
+        message: 'SUCESSS',
         data: order,
       });
     } catch (e) {
@@ -170,20 +183,20 @@ const cancelOrderDetails = (id, data) => {
               selled: -order.amount,
             },
           },
-          { new: true }
+          { new: true },
         );
         if (productData) {
           order = await Order.findByIdAndDelete(id);
           if (order === null) {
             resolve({
-              status: "ERR",
-              message: "The order is not defined",
+              status: 'ERR',
+              message: 'The order is not defined',
             });
           }
         } else {
           return {
-            status: "OK",
-            message: "ERR",
+            status: 'OK',
+            message: 'ERR',
             id: order.product,
           };
         }
@@ -193,13 +206,13 @@ const cancelOrderDetails = (id, data) => {
 
       if (newData) {
         resolve({
-          status: "ERR",
+          status: 'ERR',
           message: `San pham voi id: ${newData} khong ton tai`,
         });
       }
       resolve({
-        status: "OK",
-        message: "success",
+        status: 'OK',
+        message: 'success',
         data: order,
       });
     } catch (e) {
@@ -216,8 +229,8 @@ const getAllOrder = () => {
         updatedAt: -1,
       });
       resolve({
-        status: "OK",
-        message: "Success",
+        status: 'OK',
+        message: 'Success',
         data: allOrder,
       });
     } catch (e) {
@@ -228,6 +241,7 @@ const getAllOrder = () => {
 
 module.exports = {
   createOrder,
+  updateOrder,
   getAllOrderDetails,
   getOrderDetails,
   cancelOrderDetails,
