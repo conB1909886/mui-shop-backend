@@ -111,8 +111,7 @@ const updateOrder = (id, data) => {
         _id: checkOrder.user._id,
       });
       if (updatedOrder && user) {
-        console.log(user.email);
-        await EmailService.sendEmailCreateOrder(
+        await EmailService.sendEmailUpdateOrder(
           user.email,
           checkOrder.orderItems
         );
