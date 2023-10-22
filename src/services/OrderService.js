@@ -1,6 +1,7 @@
-const Order = require('../models/OrderProduct');
-const Product = require('../models/ProductModel');
-const EmailService = require('../services/EmailService');
+const Order = require("../models/OrderProduct");
+const Product = require("../models/ProductModel");
+const EmailService = require("../services/EmailService");
+const User = require("../models/UserModel");
 
 const createOrder = (newOrder) => {
   return new Promise(async (resolve, reject) => {
@@ -32,17 +33,17 @@ const createOrder = (newOrder) => {
               selled: +order.amount,
             },
           },
-          { new: true },
+          { new: true }
         );
         if (productData) {
           return {
-            status: 'OK',
-            message: 'SUCCESS',
+            status: "OK",
+            message: "SUCCESS",
           };
         } else {
           return {
-            status: 'OK',
-            message: 'ERR',
+            status: "OK",
+            message: "ERR",
             id: order.product,
           };
         }
@@ -55,8 +56,8 @@ const createOrder = (newOrder) => {
           arrId.push(item.id);
         });
         resolve({
-          status: 'ERR',
-          message: `San pham voi id: ${arrId.join(',')} khong du hang`,
+          status: "ERR",
+          message: `San pham voi id: ${arrId.join(",")} khong du hang`,
         });
       } else {
         const createdOrder = await Order.create({
@@ -78,13 +79,13 @@ const createOrder = (newOrder) => {
         if (createdOrder) {
           await EmailService.sendEmailCreateOrder(email, orderItems);
           resolve({
-            status: 'OK',
-            message: 'success',
+            status: "OK",
+            message: "success",
           });
         }
       }
     } catch (e) {
-      console.log('e', e);
+      console.log("e", e);
       reject(e);
     }
   });
@@ -98,19 +99,29 @@ const updateOrder = (id, data) => {
       });
       if (checkOrder === null) {
         resolve({
-          status: 'ERR',
-          message: 'The product is not defined',
+          status: "ERR",
+          message: "The product is not defined",
         });
       }
 
       const updatedOrder = await Order.findByIdAndUpdate(id, data, {
         new: true,
       });
-      resolve({
-        status: 'OK',
-        message: 'SUCCESS',
-        data: updatedOrder,
+      const user = await User.findOne({
+        _id: checkOrder.user._id,
       });
+      if (updatedOrder && user) {
+        console.log(user.email);
+        await EmailService.sendEmailCreateOrder(
+          user.email,
+          checkOrder.orderItems
+        );
+        resolve({
+          status: "OK",
+          message: "SUCCESS",
+          data: updatedOrder,
+        });
+      }
     } catch (e) {
       reject(e);
     }
@@ -125,14 +136,14 @@ const getAllOrderDetails = (id) => {
       }).sort({ createdAt: -1, updatedAt: -1 });
       if (order === null) {
         resolve({
-          status: 'ERR',
-          message: 'The order is not defined',
+          status: "ERR",
+          message: "The order is not defined",
         });
       }
 
       resolve({
-        status: 'OK',
-        message: 'SUCESSS',
+        status: "OK",
+        message: "SUCESSS",
         data: order,
       });
     } catch (e) {
@@ -150,14 +161,14 @@ const getOrderDetails = (id) => {
       });
       if (order === null) {
         resolve({
-          status: 'ERR',
-          message: 'The order is not defined',
+          status: "ERR",
+          message: "The order is not defined",
         });
       }
 
       resolve({
-        status: 'OK',
-        message: 'SUCESSS',
+        status: "OK",
+        message: "SUCESSS",
         data: order,
       });
     } catch (e) {
@@ -183,20 +194,20 @@ const cancelOrderDetails = (id, data) => {
               selled: -order.amount,
             },
           },
-          { new: true },
+          { new: true }
         );
         if (productData) {
           order = await Order.findByIdAndDelete(id);
           if (order === null) {
             resolve({
-              status: 'ERR',
-              message: 'The order is not defined',
+              status: "ERR",
+              message: "The order is not defined",
             });
           }
         } else {
           return {
-            status: 'OK',
-            message: 'ERR',
+            status: "OK",
+            message: "ERR",
             id: order.product,
           };
         }
@@ -206,13 +217,13 @@ const cancelOrderDetails = (id, data) => {
 
       if (newData) {
         resolve({
-          status: 'ERR',
+          status: "ERR",
           message: `San pham voi id: ${newData} khong ton tai`,
         });
       }
       resolve({
-        status: 'OK',
-        message: 'success',
+        status: "OK",
+        message: "success",
         data: order,
       });
     } catch (e) {
@@ -229,8 +240,8 @@ const getAllOrder = () => {
         updatedAt: -1,
       });
       resolve({
-        status: 'OK',
-        message: 'Success',
+        status: "OK",
+        message: "Success",
         data: allOrder,
       });
     } catch (e) {
