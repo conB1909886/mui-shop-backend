@@ -2,8 +2,8 @@ const CommentService = require('../services/CommentService');
 
 const createComment = async (req, res) => {
   try {
-    const { username, content, productId } = req.body;
-    if (!username || !content || !productId) {
+    const { name, content, productId, commentDate } = req.body;
+    if (!name || !content || !productId || !commentDate) {
       return res.status(200).json({
         status: 'ERR',
         message: 'The input is required',

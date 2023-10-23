@@ -1,19 +1,20 @@
-const Comment = require("../models/CommentModel");
+const Comment = require('../models/CommentModel');
 
 const createComment = (newComment) => {
   return new Promise(async (resolve, reject) => {
-    const { username, content, productId, rating } = newComment;
+    const { name, content, productId, rating, commentDate } = newComment;
     try {
       const newComment = await Comment.create({
-        username,
+        name,
         content,
         productId,
         rating,
+        commentDate,
       });
       if (newComment) {
         resolve({
-          status: "OK",
-          message: "SUCCESS",
+          status: 'OK',
+          message: 'SUCCESS',
           data: newComment,
         });
       }
@@ -31,8 +32,8 @@ const updateComment = (id, data) => {
       });
       if (checkComment === null) {
         resolve({
-          status: "ERR",
-          message: "The comment is not defined",
+          status: 'ERR',
+          message: 'The comment is not defined',
         });
       }
 
@@ -40,8 +41,8 @@ const updateComment = (id, data) => {
         new: true,
       });
       resolve({
-        status: "OK",
-        message: "SUCCESS",
+        status: 'OK',
+        message: 'SUCCESS',
         data: updatedComment,
       });
     } catch (e) {
@@ -58,15 +59,15 @@ const deleteComment = (id) => {
       });
       if (checkComment === null) {
         resolve({
-          status: "ERR",
-          message: "The comment is not defined",
+          status: 'ERR',
+          message: 'The comment is not defined',
         });
       }
 
       await Comment.findByIdAndDelete(id);
       resolve({
-        status: "OK",
-        message: "Delete comment success",
+        status: 'OK',
+        message: 'Delete comment success',
       });
     } catch (e) {
       reject(e);
@@ -79,8 +80,8 @@ const deleteManyComment = (ids) => {
     try {
       await Comment.deleteMany({ _id: ids });
       resolve({
-        status: "OK",
-        message: "Delete comment success",
+        status: 'OK',
+        message: 'Delete comment success',
       });
     } catch (e) {
       reject(e);
@@ -96,14 +97,14 @@ const getDetailsComment = (id) => {
       });
       if (comment === null) {
         resolve({
-          status: "ERR",
-          message: "The comment is not defined",
+          status: 'ERR',
+          message: 'The comment is not defined',
         });
       }
 
       resolve({
-        status: "OK",
-        message: "SUCESS",
+        status: 'OK',
+        message: 'SUCESS',
         data: comment,
       });
     } catch (e) {
@@ -119,7 +120,7 @@ const getAllComment = (limit, page, sort, filter) => {
       let allComment = [];
       if (filter) {
         const label = filter[0];
-        let regex = new RegExp(`${filter[1]}`, "ig");
+        let regex = new RegExp(`${filter[1]}`, 'ig');
         const allObjectFilter = await Comment.find({
           [label]: { $regex: regex },
         })
@@ -127,8 +128,8 @@ const getAllComment = (limit, page, sort, filter) => {
           .skip(page * limit)
           .sort({ createdAt: -1, updatedAt: -1 });
         resolve({
-          status: "OK",
-          message: "Success",
+          status: 'OK',
+          message: 'Success',
           data: allObjectFilter,
           total: totalComment,
           pageCurrent: Number(page + 1),
@@ -144,8 +145,8 @@ const getAllComment = (limit, page, sort, filter) => {
           .sort(objectSort)
           .sort({ createdAt: -1, updatedAt: -1 });
         resolve({
-          status: "OK",
-          message: "Success",
+          status: 'OK',
+          message: 'Success',
           data: allCommentSort,
           total: totalComment,
           pageCurrent: Number(page + 1),
@@ -164,8 +165,8 @@ const getAllComment = (limit, page, sort, filter) => {
           .sort({ createdAt: -1, updatedAt: -1 });
       }
       resolve({
-        status: "OK",
-        message: "Success",
+        status: 'OK',
+        message: 'Success',
         data: allComment,
         total: totalComment,
         pageCurrent: Number(page + 1),
