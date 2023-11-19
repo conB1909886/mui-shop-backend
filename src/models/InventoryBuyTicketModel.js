@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const InventoryBuyTicketSchema = new mongoose.Schema(
   {
-    ticketId: { type: String, required: true },
+    ticketId: { type: String, required: true, unique: true },
     date: { type: Number, required: true },
     inventory: { type: String, required: true },
     note: { type: String, require: false },

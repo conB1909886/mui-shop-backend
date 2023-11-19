@@ -3,7 +3,7 @@ const Product = require('../models/ProductModel');
 
 const createInventoryBuyTicket = (newInventoryBuyTicket) => {
   return new Promise(async (resolve, reject) => {
-    const { ticketId, date, inventory, products } = newInventoryBuyTicket;
+    const { ticketId, date, inventory, products, note } = newInventoryBuyTicket;
     try {
       const promises = products.map(async (product) => {
         await Product.findOneAndUpdate(
@@ -16,6 +16,7 @@ const createInventoryBuyTicket = (newInventoryBuyTicket) => {
             },
             $set: {
               price: product.price,
+              inventory: inventory,
             },
           },
           { new: true },
@@ -28,6 +29,7 @@ const createInventoryBuyTicket = (newInventoryBuyTicket) => {
         date,
         inventory,
         products,
+        note,
       });
       if (newInventoryBuyTicket) {
         resolve({
